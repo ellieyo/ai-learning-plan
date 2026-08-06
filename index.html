@@ -91,7 +91,6 @@ th.rt{text-align:right}
 footer{padding:14px 16px 40px;font-size:11px;color:var(--mute)}
 code{background:var(--zebra);padding:1px 4px;border-radius:3px;font-size:10.5px}
 @media(max-width:900px){table{table-layout:auto}.hide-s{display:none}}
-thead th:nth-child(2),td.tm{display:none}
 </style></head><body>
 
 <div class="bar">
@@ -112,8 +111,7 @@ thead th:nth-child(2),td.tm{display:none}
 <table>
 <thead><tr>
   <th data-k="Date"   style="width:92px">Date<span class="ar">&#9650;</span></th>
-  <th data-k="Time"   style="width:108px">Time<span class="ar">&#9650;</span></th>
-  <th data-k="Status" style="width:98px">Status<span class="ar">&#9650;</span></th>
+    <th data-k="Status" style="width:98px">Status<span class="ar">&#9650;</span></th>
   <th data-k="Type"   style="width:104px">Type<span class="ar">&#9650;</span></th>
   <th data-k="Title">Item<span class="ar">&#9650;</span></th>
   <th data-k="Organization" style="width:190px">Organization<span class="ar">&#9650;</span></th>
@@ -186,7 +184,6 @@ function row(r,i){
     (r.URL?`<a href="${esc(r.URL)}" target="_blank" rel="noopener">${main}</a>`:main);
   return `<tr class="r" data-i="${i}">
     <td class="dt">${dt}</td>
-    <td class="tm">${esc(r.Time)||"&ndash;"}</td>
     <td><span class="st st-${slug(r.Status)}">${esc(r.Status)}</span></td>
     <td class="ty">${esc(r.Type)}</td>
     <td class="ti" title="${esc(r.Title)}">${ti}</td>
@@ -217,7 +214,7 @@ function render(){
     if(byDate){
       const w=r.week||"__none__";
       if(w!==lastWk){
-        html+=`<tr class="wk${r.week===MONDAY?" now":""}"><td colspan="9">`+
+        html+=`<tr class="wk${r.week===MONDAY?" now":""}"><td colspan="8">`+
               (r.week?wkLabel(r.week):"No date set")+`</td></tr>`;
         lastWk=w;
       }
@@ -225,7 +222,7 @@ function render(){
     html+=row(r,DATA.indexOf(r));
   });
   document.getElementById("tb").innerHTML=html||
-    `<tr><td colspan="9" class="empty">Nothing matches those filters.</td></tr>`;
+    `<tr><td colspan="8" class="empty">Nothing matches those filters.</td></tr>`;
   document.getElementById("count").textContent=rows.length+" of "+DATA.filter(inTab).length;
   const DONE=["Completed","In progress"], AHEAD=["Scheduled","Registered","Accepted"];
   const sum=ss=>rows.reduce((t,r)=>t+(r.Total&&ss.includes(r.Status)?parseFloat(r.Total):0),0);
@@ -259,10 +256,5 @@ document.getElementById("tb").addEventListener("click",e=>{
   const td=e.target.closest("td.no"); if(td)td.parentElement.classList.toggle("open");});
 
 render();
-document.getElementById("foot").innerHTML=
-  "Upcoming holds the current week and everything after it. Completed holds earlier weeks, newest first. Reading holds everything I&rsquo;ve read, watched, or taken, newest first, with links to each source. "+
-  "Hours is the total for that row. A + means prep time is folded in. Totals respond to the filters. "+
-  "To Apply = not yet applied for. "+
-  "Click a column header to sort. Click a note to expand that row and see clipped text in full. "+
-  "Built Aug 6, 2026.";
+// footers removed everywhere (Elizabeth, 2026-08-06)
 </script></body></html>
