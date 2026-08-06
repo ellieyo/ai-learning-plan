@@ -91,6 +91,7 @@ th.rt{text-align:right}
 footer{padding:14px 16px 40px;font-size:11px;color:var(--mute)}
 code{background:var(--zebra);padding:1px 4px;border-radius:3px;font-size:10.5px}
 @media(max-width:900px){table{table-layout:auto}.hide-s{display:none}}
+body.rtab th[data-k=Location],body.rtab td.lo,body.rtab th[data-k=Notes],body.rtab td.no{display:none}
 </style></head><body>
 
 <div class="bar">
@@ -194,7 +195,7 @@ function row(r,i){
     <td class="no hide-s" title="click to expand">${esc(r.NotesFull)}</td></tr>`;
 }
 
-function render(){
+function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab",_rt);const _o=document.querySelector('th[data-k="Organization"]');if(_o)_o.firstChild.textContent=_rt?"Author":"Organization";
   let rows=DATA.filter(match);
   if(!userSorted){ sortK="Date"; sortAsc = (TAB==="upcoming"); }
   const dir=sortAsc?1:-1;
@@ -214,7 +215,7 @@ function render(){
     if(byDate){
       const w=r.week||"__none__";
       if(w!==lastWk){
-        html+=`<tr class="wk${r.week===MONDAY?" now":""}"><td colspan="8">`+
+        html+=`<tr class="wk${r.week===MONDAY?" now":""}"><td colspan="${TAB==="reading"?6:8}">`+
               (r.week?wkLabel(r.week):"No date set")+`</td></tr>`;
         lastWk=w;
       }
@@ -222,7 +223,7 @@ function render(){
     html+=row(r,DATA.indexOf(r));
   });
   document.getElementById("tb").innerHTML=html||
-    `<tr><td colspan="8" class="empty">Nothing matches those filters.</td></tr>`;
+    `<tr><td colspan="${TAB==="reading"?6:8}" class="empty">Nothing matches those filters.</td></tr>`;
   document.getElementById("count").textContent=rows.length+" of "+DATA.filter(inTab).length;
   const DONE=["Completed","In progress"], AHEAD=["Scheduled","Registered","Accepted"];
   const sum=ss=>rows.reduce((t,r)=>t+(r.Total&&ss.includes(r.Status)?parseFloat(r.Total):0),0);
