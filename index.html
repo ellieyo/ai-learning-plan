@@ -226,7 +226,6 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
   });
   document.getElementById("tb").innerHTML=html||
     `<tr><td colspan="${TAB==="reading"?6:8}" class="empty">Nothing matches those filters.</td></tr>`;
-  document.getElementById("count").textContent=rows.length+" of "+DATA.filter(inTab).length;
   const DONE=["Completed","In progress"], AHEAD=["Scheduled","Registered","Accepted"];
   // Hours on a past-dated row are already spent, whatever the program status says.
   // An application event stays "Accepted"/"Registered" while its hours count as done.
@@ -239,6 +238,13 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
   document.getElementById("tot").innerHTML=(TAB==="reading")?"":
     `<b>${n(done)}</b> hrs done` + (ahead?`<span class="sepd">|</span><b>${n(ahead)}</b> hrs booked`:"") +
     (miss?`<span class="sepd">|</span>${miss} unlogged`:"");
+  // Reading tab: total hours, not row counts (Elizabeth, 2026-08-25)
+  const tabAll=DATA.filter(inTab);
+  const allH=tabAll.reduce((t,r)=>t+hrs(r),0);
+  const selH=rows.reduce((t,r)=>t+hrs(r),0);
+  document.getElementById("count").textContent = TAB==="reading"
+    ? (rows.length===tabAll.length ? n(allH)+" hrs" : n(selH)+" of "+n(allH)+" hrs")
+    : rows.length+" of "+tabAll.length;
   document.querySelectorAll("thead th").forEach(th=>{
     th.classList.toggle("s",th.dataset.k===sortK);
     const ar=th.querySelector(".ar"); if(ar)ar.innerHTML=(th.dataset.k===sortK&&!sortAsc)?"&#9660;":"&#9650;";
