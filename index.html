@@ -245,9 +245,8 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
   const tabAll=DATA.filter(inTab);
   const allH=tabAll.reduce((t,r)=>t+hrs(r),0);
   const selH=rows.reduce((t,r)=>t+hrs(r),0);
-  document.getElementById("count").textContent = TAB==="reading"
-    ? (rows.length===tabAll.length ? n(allH)+" hrs" : n(selH)+" of "+n(allH)+" hrs")
-    : "";  // no "63 of 63" row count (Elizabeth, 2026-09-28)
+  // No small count on any tab; the large hours total covers it (Elizabeth, 2026-09-28)
+  document.getElementById("count").textContent = "";
   document.querySelectorAll("thead th").forEach(th=>{
     th.classList.toggle("s",th.dataset.k===sortK);
     const ar=th.querySelector(".ar"); if(ar)ar.innerHTML=(th.dataset.k===sortK&&!sortAsc)?"&#9660;":"&#9650;";
