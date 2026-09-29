@@ -194,7 +194,7 @@ function row(r,i){
     <td class="og" title="${esc(r.Organization)}">${r.OrgURL?`<a href="${esc(r.OrgURL)}" target="_blank" rel="noopener">${esc(r.Organization)}</a>`:esc(r.Organization)}</td>
     <td class="lo hide-s" title="${esc(r.Location)}">${esc(r.Location)}</td>
     <td class="hh${r.Total?"":" z"}"${r.PrepDetail?` title="${esc(r.Hours)}h scheduled + ${esc(r.PrepHours)}h prep &#10;&#10;${esc(r.PrepDetail).replace(/; /g,"&#10;")}"`:""}>${
-      r.Total?esc(r.Total):"&ndash;"}${r.PrepHours?'<span class="pf">+</span>':""}</td>
+      r.Total?esc(r.Total):"&ndash;"}</td>
     <td class="no hide-s" title="click to expand">${esc(r.NotesFull)}</td></tr>`;
 }
 
