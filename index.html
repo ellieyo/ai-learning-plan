@@ -12,14 +12,24 @@ a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 
 .bar{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line);
- display:flex;flex-direction:column;gap:10px;padding:14px 16px 12px}
+ display:flex;flex-direction:column}
 /* Two-row header (Elizabeth, 2026-09-28): row 1 = title + overall hours,
    row 2 = tabs, filters and the hours for the current section. */
 .bar .r1,.bar .r2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.bar .r1{align-items:baseline;gap:6px 16px}
-.bar h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.hl{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
-.hl b{color:var(--ink);font-size:15px;font-weight:700}
+.bar .r1{padding:18px 16px 16px;gap:12px 28px}
+.bar .r2{padding:10px 16px;background:var(--zebra);border-top:1px solid var(--line)}
+.bar h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+/* Row-1 stats: part + part = total. The total is styled apart (accent, tint,
+   larger) so it never reads as a third number to add (Elizabeth, 2026-09-28). */
+.stats{display:flex;align-items:center;gap:18px;padding-left:28px;border-left:1px solid var(--line);flex-wrap:wrap}
+.stat .v{font-size:17px;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .v small{font-size:12px;font-weight:500;color:var(--mute);margin-left:3px}
+.stat .l{font-size:11.5px;color:var(--mute);margin-top:2px}
+.op{font-size:18px;color:#c3bfb6;font-weight:300;align-self:flex-start;margin-top:-2px}
+.stat.total{background:#eef3f1;border-radius:6px;padding:6px 12px}
+.stat.total .v{font-size:22px;font-weight:720;color:var(--accent)}
+.stat.total .l{color:var(--accent);font-weight:600}
+@media(max-width:700px){.stats{padding-left:0;border-left:0}}
 select,input[type=search]{font:inherit;font-size:12px;padding:3px 7px;border:1px solid var(--line);
  border-radius:5px;background:var(--bg);color:var(--ink);max-width:190px}
 select:focus,input:focus{outline:none;border-color:var(--accent)}
@@ -72,10 +82,10 @@ td.hh.z{color:#c3bfb6;font-weight:400}
 td.hh[title]{cursor:help}
 .pf{color:var(--accent);font-weight:700;margin-left:1px}
 th.rt{text-align:right}
-.tot{font-size:13px;color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums;
- display:inline-flex;align-items:baseline;gap:4px;margin-left:10px}
-.tot b{color:var(--ink);font-size:22px;font-weight:720;letter-spacing:-.01em;line-height:1}
-.tot .sepd{margin:0 8px;opacity:.35;line-height:1}
+.tot{font-size:12px;color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums;
+ display:inline-flex;align-items:baseline;gap:4px;margin-left:auto}
+.tot b{color:var(--ink);font-size:12px;font-weight:650}
+.tot .sepd{margin:0 5px;opacity:.35}
 
 .st{display:inline-block;font-size:10.5px;font-weight:650;letter-spacing:.02em;
  padding:1.5px 7px;border-radius:4px;white-space:nowrap}
@@ -106,7 +116,7 @@ body.rtab th[data-k=Organization]{width:400px!important}
 <div class="bar">
   <div class="r1">
   <h1>AI Learning Plan</h1>
-  <span class="hl" id="hl"></span>
+  <div class="stats" id="hl"></div>
   </div>
   <div class="r2">
   <div class="tabs">
@@ -183,12 +193,16 @@ const tabHrs=f=>{const h=DATA.filter(f).reduce((t,r)=>t+(r.Total?parseFloat(r.To
 document.getElementById("nA").textContent=tabHrs(r=>!isReading(r)&&!isPast(r));
 document.getElementById("nB").textContent=tabHrs(r=>!isReading(r)&&isPast(r));
 document.getElementById("nC").textContent=tabHrs(isReading);
-// Row-1 headline: all non-reading hours + all reading hours, the same totals
-// as the tab badges so the numbers add up (Elizabeth, 2026-09-28)
-const sumHrs=f=>Number(DATA.filter(f).reduce((t,r)=>t+(r.Total?parseFloat(r.Total):0),0).toFixed(1)).toLocaleString();
+// Row-1 stats: hours already spent on coursework, workshops and 1:1s, plus
+// reading, and their total. No booked/future hours here (Elizabeth, 2026-09-28).
+const _spent=r=>isPast(r)||["Completed","In progress"].includes(r.Status);
+const _sum=f=>DATA.filter(f).reduce((t,r)=>t+(r.Total?parseFloat(r.Total):0),0);
+const _f=x=>Number(x.toFixed(1)).toLocaleString();
+const _stat=(v,l,k)=>`<div class="stat${k?" "+k:""}"><div class="v">${_f(v)}<small>hrs</small></div><div class="l">${l}</div></div>`;
+const _c=_sum(r=>!isReading(r)&&_spent(r)), _r=_sum(isReading);
 document.getElementById("hl").innerHTML=
-  `<b>${sumHrs(r=>!isReading(r))}</b> hours coursework, 1:1s, applications + `+
-  `<b>${sumHrs(isReading)}</b> hours independent reading`;
+  _stat(_c,"Coursework, workshops, 1:1s")+'<span class="op">+</span>'+
+  _stat(_r,"Independent reading")+'<span class="op">=</span>'+_stat(_c+_r,"Total","total");
 // keep the sticky column headers directly under the (now taller) bar
 const setBarH=()=>document.documentElement.style.setProperty("--barh",
   document.querySelector(".bar").offsetHeight+"px");
@@ -259,7 +273,7 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
   // An application event stays "Accepted"/"Registered" while its hours count as done.
   const isDone=r=>isPast(r)||DONE.includes(r.Status);
   const hrs=r=>r.Total?parseFloat(r.Total):0;
-  const n=x=>Number(x.toFixed(2)).toLocaleString();
+  const n=x=>Number(x.toFixed(1)).toLocaleString();  // one decimal everywhere
   const done =rows.reduce((t,r)=>t+(isDone(r)?hrs(r):0),0);
   const ahead=rows.reduce((t,r)=>t+(!isDone(r)&&AHEAD.includes(r.Status)?hrs(r):0),0);
   const miss=rows.filter(r=>!r.Total).length;
