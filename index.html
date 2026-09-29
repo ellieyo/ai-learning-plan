@@ -93,7 +93,7 @@ th.rt{text-align:right}
 footer{padding:14px 16px 40px;font-size:11px;color:var(--mute)}
 code{background:var(--zebra);padding:1px 4px;border-radius:3px;font-size:10.5px}
 @media(max-width:900px){table{table-layout:auto}.hide-s{display:none}}
-body.rtab th[data-k=Location],body.rtab td.lo,body.rtab th[data-k=Notes],body.rtab td.no{display:none}
+body.rtab th[data-k=Location],body.rtab td.lo{display:none}
 </style></head><body>
 
 <div class="bar">
@@ -220,7 +220,7 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
     if(byDate){
       const w=r.week||"__none__";
       if(w!==lastWk){
-        html+=`<tr class="wk${r.week===MONDAY?" now":""}"><td colspan="${TAB==="reading"?6:8}">`+
+        html+=`<tr class="wk${r.week===MONDAY?" now":""}"><td colspan="${TAB==="reading"?7:8}">`+
               (r.week?wkLabel(r.week):"No date set")+`</td></tr>`;
         lastWk=w;
       }
@@ -228,7 +228,7 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
     html+=row(r,DATA.indexOf(r));
   });
   document.getElementById("tb").innerHTML=html||
-    `<tr><td colspan="${TAB==="reading"?6:8}" class="empty">Nothing matches those filters.</td></tr>`;
+    `<tr><td colspan="${TAB==="reading"?7:8}" class="empty">Nothing matches those filters.</td></tr>`;
   const DONE=["Completed","In progress"], AHEAD=["Scheduled","Registered","Accepted"];
   // Hours on a past-dated row are already spent, whatever the program status says.
   // An application event stays "Accepted"/"Registered" while its hours count as done.
