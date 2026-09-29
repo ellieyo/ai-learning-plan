@@ -67,8 +67,7 @@ td.hh[title]{cursor:help}
 .pf{color:var(--accent);font-weight:700;margin-left:1px}
 th.rt{text-align:right}
 .tot{font-size:13px;color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums;
- display:inline-flex;align-items:baseline;gap:4px;padding:4px 12px;border-radius:8px;
- background:var(--zebra);border:1px solid var(--line);margin-left:6px}
+ display:inline-flex;align-items:baseline;gap:4px;margin-left:10px}
 .tot b{color:var(--ink);font-size:22px;font-weight:720;letter-spacing:-.01em;line-height:1}
 .tot .sepd{margin:0 8px;opacity:.35;font-size:18px}
 
@@ -248,7 +247,7 @@ function render(){const _rt=TAB==="reading";document.body.classList.toggle("rtab
   const selH=rows.reduce((t,r)=>t+hrs(r),0);
   document.getElementById("count").textContent = TAB==="reading"
     ? (rows.length===tabAll.length ? n(allH)+" hrs" : n(selH)+" of "+n(allH)+" hrs")
-    : rows.length+" of "+tabAll.length;
+    : "";  // no "63 of 63" row count (Elizabeth, 2026-09-28)
   document.querySelectorAll("thead th").forEach(th=>{
     th.classList.toggle("s",th.dataset.k===sortK);
     const ar=th.querySelector(".ar"); if(ar)ar.innerHTML=(th.dataset.k===sortK&&!sortAsc)?"&#9660;":"&#9650;";
